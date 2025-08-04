@@ -7,7 +7,6 @@ const port = 3000
 app.use(express.static('imgs/posts'))
 
 const postsRouter = require('./routers/posts');
-const posts = require('./posts');
 
 app.get('/', (req, res) => {
   res.json(posts);
