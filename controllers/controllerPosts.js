@@ -1,7 +1,14 @@
 const posts = require('../data/posts');
 
 const index = (req, res) => {
-  res.json(posts);
+  const tag = req.query.tag;
+  let filteredPosts = posts;
+
+  if (tag) {
+    filteredPosts = posts.filter(item => item.tag.toLowerCase().includes(tag.toLowerCase()));
+  }
+
+  res.json(filteredPosts);
 };
 
 const show = (req, res) => {
@@ -28,9 +35,14 @@ const modify = (req, res) => {
 const destroy = (req, res) => {
   const id = parseInt(req.params.id);
   const post = posts.find(item => item.id === id);
-  posts.splice(posts.indexOf(post), 1);
 
+  if (!post) {
+    return res.status(404).json({ error: "not found", message: "Post non trovato" });
+  }
+
+  posts.splice(posts.indexOf(post), 1);
   console.log('Lista post aggiornata:', posts);
+
   res.sendStatus(204);
 };
 
