@@ -1,11 +1,16 @@
+// recupero i posts 
 const posts = require('../data/posts');
 
+// index
 const index = (req, res) => {
-  const tag = req.query.tag;
+  const tags = req.query.tag;
+  // definisco l'arrey
   let filteredPosts = posts;
 
-  if (tag) {
-    filteredPosts = posts.filter(item => item.tag.toLowerCase().includes(tag.toLowerCase()));
+  if (tags) {
+    filteredPosts = posts.filter(item => {
+      return item.tags.map(tag => tag.toLowerCase()).includes(tags.toLowerCase())
+    })
   }
 
   res.json(filteredPosts);
@@ -20,17 +25,41 @@ const show = (req, res) => {
 };
 
 const store = (req, res) => {
-  res.send('Creazione di un nuovo post');
+  const newIdPosts = posts[posts.length - 1].id + 1;
+  const { name, image, tags } = req.body
+  posts.push({
+    id: newIdPosts,
+    name,
+    image,
+    tags,
+  })
+  res.status(201).json(posts);
 };
 
 const update = (req, res) => {
-  res.send(`Aggiornamento del post ${req.params.id}`);
+  const id = parseInt(req.params.id);
+  const post = posts.find(item => item.id === id);
+  if (!post)
+    return res.status(404).json({ error: "not found", message: "Post non trovato" });
+
+  post.name = req.body.name
+  post.image = req.body.image
+  post.tags = req.body.tags
+
+  res.json(post);
 };
 
 const modify = (req, res) => {
-  res.send(`Aggiornamento parziale del post ${req.params.id}`);
-};
+  const id = parseInt(req.params.id);
+  const post = posts.find(item => item.id === id);
+  if (!post) {
+    return res.status(404).json({ error: "not found", message: "Post non trovato" });
+  }
 
+  post.tags = req.body.tags;
+
+  res.json(post);
+};
 
 const destroy = (req, res) => {
   const id = parseInt(req.params.id);
