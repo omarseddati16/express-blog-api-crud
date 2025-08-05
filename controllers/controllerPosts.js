@@ -3,17 +3,15 @@ const posts = require('../data/posts');
 
 // index
 const index = (req, res) => {
-  const tags = req.query.tag;
-  // definisco l'arrey
-  let filteredPosts = posts;
-
-  if (tags) {
-    filteredPosts = posts.filter(item => {
-      return item.tags.map(tag => tag.toLowerCase()).includes(tags.toLowerCase())
-    })
+  const tag = req.query.tag;
+  if (tag) {
+    const filteredPosts = posts.filter(post =>
+      post.tags.some(postTag => postTag.toLowerCase() === tag.toLowerCase())
+    );
+    return res.json(filteredPosts);
   }
 
-  res.json(filteredPosts);
+  res.json(posts);
 };
 
 const show = (req, res) => {
