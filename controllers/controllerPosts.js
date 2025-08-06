@@ -40,6 +40,7 @@ const update = (req, res) => {
   if (!post)
     return res.status(404).json({ error: "not found", message: "Post non trovato" });
 
+
   post.name = req.body.name
   post.image = req.body.image
   post.tags = req.body.tags
